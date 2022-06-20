@@ -32,7 +32,7 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+# About The Project
 
 Final Degree Project of the Software Engineering Degree in the University of Oviedo.
 
@@ -41,13 +41,13 @@ Final Degree Project of the Software Engineering Degree in the University of Ovi
 
 
 <!-- GETTING STARTED -->
-## Getting Started
+# Getting Started
 
 This application works for Windows (Windows 11) and Linux (Ubuntu and CentOS). In case that
 there is something that needs to be indicated for one OS or the other, it will be explained.
 To get a local copy up and running follow these simple example steps.
 
-### Prerequisites
+## Prerequisites
 
 In the Linux versions you will also need to install the package deep_translator, like this:
   ```sh
@@ -55,7 +55,7 @@ In the Linux versions you will also need to install the package deep_translator,
   ```
 Python 3.7 installed
 
-### Installation
+## Installation
 
 Clone the repo
    ```sh
@@ -63,10 +63,10 @@ Clone the repo
    ```
    
  Here we may distinct two different versions:
-  #### Windows
+  ### Windows
   Double click on the main.exe application.
   
-  # Linux
+  ### Linux
   Use the following line of code
   ```sh
   sudo python main.py
@@ -77,11 +77,11 @@ Clone the repo
 
 
 <!-- USAGE EXAMPLES -->
-## Usage
+# Usage
 
 We are going to explain now the different functionalities of the application
 
-# Using the DSL commands
+## Using the DSL commands
 The DSL commands are separated into sections. In order to use a command we will have to make:
 ```sh
   section_name command_name
@@ -91,7 +91,7 @@ This commands can be found on the files ComandosApacheWindows.json, ComandosApac
 After the execution of the command, it will show the executed command, the expected output of that given command and the execution of the command.
 
 
-# Help
+## Help
 You could ask for help of all the commands with the order:
 ```sh
   help
@@ -103,14 +103,14 @@ You could also ask for help about a command with:
   ```
   
   
-# Create new command
+## Create new command
 In case of wanting to define a new command with name command_name, write:
 ```sh
   create command_name
   ```
 
 
-# Import a command
+## Import a command
 In case of wanting to import a command or a set of commands use the order:
 ```sh
   import from name_of_file name_of_command_1, name_of_command_2, ...
@@ -119,7 +119,7 @@ In case of wanting to import a command or a set of commands use the order:
 If the name of the command is not specified, all commands will be imported.
 
 
-# Export a command
+## Export a command
 In case of wanting to export  a command or a set of commands use the order:
 ```sh
   export name_of_command_1, name_of_command_2, ... into name_of_file
@@ -128,7 +128,7 @@ In case of wanting to export  a command or a set of commands use the order:
 If the name of the command is not specified, all commands will be imported.
 
 
-# Change language
+## Change language
 If you want to change the language write:
 ```sh
   set language LANGUAGE
@@ -137,7 +137,7 @@ LANGUAGE being the desired language (Only English and Spanish are available)
 
 
 
-# User friendly functionalities
+## User-friendly functionalities
 1. Auto-fill of commands with the TAB key
 2. History of command with the arrow keys and a local copy called history.txt
 3. In case of mispelling an algorithm will tell you which option resembles most the given input
@@ -147,7 +147,7 @@ LANGUAGE being the desired language (Only English and Spanish are available)
 
 
 <!-- LICENSE -->
-## License
+# License
 
 Distributed under the Apache License. See `LICENSE.txt` for more information.
 
@@ -156,7 +156,7 @@ Distributed under the Apache License. See `LICENSE.txt` for more information.
 
 
 <!-- CONTACT -->
-## Contact
+# Contact
 
 Álvaro García Infante
 
@@ -167,7 +167,7 @@ Project Link: [https://github.com/alvarogarinf/Securing-Apache-Servers-using-DSL
 
 
 <!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
+# Acknowledgments
 
 * [CIS BENCHMARKS](https://www.cisecurity.org/)
 
