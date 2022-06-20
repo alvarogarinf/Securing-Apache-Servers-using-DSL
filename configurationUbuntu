@@ -1,0 +1,2 @@
+APACHE=/etc/apache2
+PASSWORD=/etc/passwd

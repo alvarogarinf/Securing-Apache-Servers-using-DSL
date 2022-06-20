@@ -1,0 +1,270 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>lexer module &#8212; DSL (Lenguaje de Dominio Específico) para configurar un servidor de forma segura  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="main module" href="main.html" />
+    <link rel="prev" title="lang module" href="lang.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-lexer">
+<span id="lexer-module"></span><h1>lexer module<a class="headerlink" href="#module-lexer" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="lexer.check_grammar">
+<span class="sig-prename descclassname"><span class="pre">lexer.</span></span><span class="sig-name descname"><span class="pre">check_grammar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lexer.html#check_grammar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lexer.check_grammar" title="Permalink to this definition">¶</a></dt>
+<dd><p>It will check the terms over the whole text of the user to check for a correct grammar using the rest
+of the methods of the class</p>
+<p>Parameters:
+text (String): Read text</p>
+<p>Returns:
+nothing</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lexer.check_help_terms">
+<span class="sig-prename descclassname"><span class="pre">lexer.</span></span><span class="sig-name descname"><span class="pre">check_help_terms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lexer.html#check_help_terms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lexer.check_help_terms" title="Permalink to this definition">¶</a></dt>
+<dd><p>It will check the terms over the read line to check for a correct grammar in the help method</p>
+<p>Parameters:
+parts (array String): Read line
+line (int): Line number</p>
+<p>Returns:
+nothing</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lexer.check_parts">
+<span class="sig-prename descclassname"><span class="pre">lexer.</span></span><span class="sig-name descname"><span class="pre">check_parts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lexer.html#check_parts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lexer.check_parts" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method will check that all the orders from the user are correctly written. In case any of the orders
+is not correctly written it will rise an assertion exception with the message showing what was the problem.</p>
+<p>Parameters:
+parts (array string): Order to be checked
+line (int): Line of the order</p>
+<p>Returns:
+nothing</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lexer.check_terms">
+<span class="sig-prename descclassname"><span class="pre">lexer.</span></span><span class="sig-name descname"><span class="pre">check_terms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lexer.html#check_terms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lexer.check_terms" title="Permalink to this definition">¶</a></dt>
+<dd><p>It will check the terms over the read line to check for a correct grammar using other methods</p>
+<p>Parameters:
+parts (array String): Read line
+line (int): Line number</p>
+<p>Returns:
+nothing</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="lexer.first_methods_list">
+<span class="sig-prename descclassname"><span class="pre">lexer.</span></span><span class="sig-name descname"><span class="pre">first_methods_list</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Create',</span> <span class="pre">'Help',</span> <span class="pre">'Run</span> <span class="pre">level',</span> <span class="pre">'Import',</span> <span class="pre">'Export']</span></em><a class="headerlink" href="#lexer.first_methods_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>This module is used to connect to check that the grammar of the user is correct, in case that it is incorrect it will
+tell the user why it is incorrect and how he can make it correct. After checking the grammar it will call the interpreter module.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lexer.predict">
+<span class="sig-prename descclassname"><span class="pre">lexer.</span></span><span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lexer.html#predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lexer.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method takes a string and predicts the word that the user may refer to</p>
+<p>Parameters:
+tern (String): Current word</p>
+<p>Returns:
+String: Predicted word</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lexer.predict_first_term">
+<span class="sig-prename descclassname"><span class="pre">lexer.</span></span><span class="sig-name descname"><span class="pre">predict_first_term</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">term</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lexer.html#predict_first_term"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lexer.predict_first_term" title="Permalink to this definition">¶</a></dt>
+<dd><p>It will predict which first term does the user tries to refer when making an error</p>
+<p>Parameters:
+list (list): List of possible terms
+term (int): Description of arg1</p>
+<p>Returns:
+String: Word predicted</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lexer.predict_first_terms">
+<span class="sig-prename descclassname"><span class="pre">lexer.</span></span><span class="sig-name descname"><span class="pre">predict_first_terms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">term</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lexer.html#predict_first_terms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lexer.predict_first_terms" title="Permalink to this definition">¶</a></dt>
+<dd><p>It will predict which first terms does the user tries to refer when making an error</p>
+<p>Parameters:
+l (list): List of possible terms
+term (int): Description of arg1</p>
+<p>Returns:
+String: Word predicted</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lexer.predict_second_term">
+<span class="sig-prename descclassname"><span class="pre">lexer.</span></span><span class="sig-name descname"><span class="pre">predict_second_term</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">term</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lexer.html#predict_second_term"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lexer.predict_second_term" title="Permalink to this definition">¶</a></dt>
+<dd><p>It will predict which second term does the user tries to refer when making an error</p>
+<p>Parameters:
+list (list): List of possible terms
+term (int): Description of arg1</p>
+<p>Returns:
+String: Word predicted</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lexer.predict_second_terms">
+<span class="sig-prename descclassname"><span class="pre">lexer.</span></span><span class="sig-name descname"><span class="pre">predict_second_terms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">term</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lexer.html#predict_second_terms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lexer.predict_second_terms" title="Permalink to this definition">¶</a></dt>
+<dd><p>It will predict which second terms does the user tries to refer when making an error</p>
+<p>Parameters:
+l (list): List of possible terms
+term (int): Description of arg1</p>
+<p>Returns:
+String: Word predicted</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lexer.save_into_history_file">
+<span class="sig-prename descclassname"><span class="pre">lexer.</span></span><span class="sig-name descname"><span class="pre">save_into_history_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lexer.html#save_into_history_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lexer.save_into_history_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to save the history into a file</p>
+<p>Parameters:
+line (int): Number of the line</p>
+<p>Returns:
+none</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lexer.select_common">
+<span class="sig-prename descclassname"><span class="pre">lexer.</span></span><span class="sig-name descname"><span class="pre">select_common</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">word</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lexer.html#select_common"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lexer.select_common" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is used to get the term that is similar to the typed word. It is used to predict the input from the user.</p>
+<p>Parameters:
+terms (array): Array of terms that need to be compared
+word (String): Word typed</p>
+<p>Returns:
+String:Predicted word</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lexer.select_common_second">
+<span class="sig-prename descclassname"><span class="pre">lexer.</span></span><span class="sig-name descname"><span class="pre">select_common_second</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">word</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lexer.html#select_common_second"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lexer.select_common_second" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is used to get the term that is similar to the typed word. It is used to predict the input from the user.
+It is similar to the select_common but for the commands inside the packages</p>
+<p>Parameters:
+terms (array): Array of terms that need to be compared
+word (String): Word typed</p>
+<p>Returns:
+String:Predicted word</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">DSL (Lenguaje de Dominio Específico) para configurar un servidor de forma segura</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Pruebas</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dsl.html">dsl module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpreter.html">interpreter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json_manager.html">json_manager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lang.html">lang module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">lexer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">Pruebas</a><ul>
+      <li>Previous: <a href="lang.html" title="previous chapter">lang module</a></li>
+      <li>Next: <a href="main.html" title="next chapter">main module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Álvaro G. Infante.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/lexer.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

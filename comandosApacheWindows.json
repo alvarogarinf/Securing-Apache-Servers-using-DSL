@@ -1,0 +1,243 @@
+{
+    "Installation": [
+        {
+            "nombre": "Check_Server_Is_Not_Multi_Use_System",
+            "desc": "Asegurarse de que el servidor no es de multiuso. Devolver\u00e1 la lista de servicios activos",
+            "comando": "Get-Service | Where-Object {$_.Status -eq 'Running'}"
+        },
+        {
+            "nombre": "Remediate_Server_Is_Not_Multi_Use_System",
+            "desc": "En caso de que haya algun servicio que no deba estar activado, pasarlo como parametro",
+            "comando": "Stop-Service -Name 'PARAM'"
+        },
+        {
+            "nombre": "Ensure_Apache_Is_Installed_Appropriately",
+            "desc": "Asegurarse de que Apache ha sido instalado de los archivos binarios apropiados. Se comprobar\u00e1 si est\u00e1 instalado Apache, sino se instalar\u00e1",
+            "comando": "Get-Service -Name 'Apache HTTP Server'"
+        },
+        {
+            "nombre": "Remediate_Apache_Is_Installed_Appropriately",
+            "desc": "Establecer Apache como un servicio",
+            "comando": "APACHE/bin/httpd.exe -k install -n ApacheHTTPServer"
+        }
+    ],
+    "Minimize_Modules": [
+        {
+            "nombre": "Ensure_Only_Necessary_Authentication_And_Authorization_Modules_Are_Enabled",
+            "desc": "Asegurarse que solo los m\u00f3dulos necesarios de autorizacion y autenticacion est\u00e1n habilitados. La salida deber\u00eda mostrar el m\u00f3dulo auth y ldap",
+            "comando": "APACHE/bin/httpd.exe -M | Select-String -Pattern 'auth._|ldap'"
+        },
+        {
+            "nombre": "Ensure_Log_Config_Module_Is_Enabled",
+            "desc": "Asegurarse que el modulo log_config est\u00e1 habilitado. La salida deber\u00eda mostrar el m\u00f3dulo ",
+            "comando": "APACHE/bin/httpd.exe -M | Select-String -Pattern log_config"
+        },
+        {
+            "nombre": "Ensure_WebDAV_Modules_Are_Disabled",
+            "desc": "Comprobar que los m\u00f3dulos WebDAV est\u00e1n desactivados.  La salida correcta no deber\u00eda mostrar nada",
+            "comando": "APACHE/bin/httpd.exe -M | Select-String -Pattern ' dav_[[:print:]]+module'"
+        },
+        {
+            "nombre": "Ensure_Status_Module_Is_Disabled",
+            "desc": "Comprobar que el modulo mod_status est\u00e1 deshabilitado. Si est\u00e1 configurado correctamente esto no producir\u00e1 salida alguna",
+            "comando": "APACHE/bin/httpd.exe -M | eSelect-String -Pattern 'status_module'"
+        },
+        {
+            "nombre": "Ensure_Autoindex_Module_Is_Disabled",
+            "desc": "Comprobar que el modulo autoindex est\u00e1 deshabilitado. Si est\u00e1 configurado correctamente esto no producir\u00e1 salida alguna",
+            "comando": "APACHE/bin/httpd.exe -M | Select-String -Pattern autoindex_module"
+        },
+        {
+            "nombre": "Ensure_Proxy_Module_Is_Disabled",
+            "desc": "Comprobar que el modulo proxy est\u00e1 deshabilitado. Si est\u00e1 configurado correctamente esto no producir\u00e1 salida alguna",
+            "comando": "APACHE/bin/httpd.exe -M | Select-String -Pattern proxy_"
+        },
+        {
+            "nombre": "Ensure_User_Directories_Module_Is_Disabled",
+            "desc": "Comprobar que el modulo user_dir est\u00e1 deshabilitado. Si est\u00e1 configurado correctamente esto no producir\u00e1 salida alguna",
+            "comando": "APACHE/bin/httpd.exe -M | Select-String -Pattern userdir_"
+        },
+        {
+            "nombre": "Ensure_Info_Module_Is_Disabled",
+            "desc": "Comprobar que el modulo mod_info est\u00e1 deshabilitado. Si est\u00e1 configurado correctamente esto no producir\u00e1 salida alguna",
+            "comando": "APACHE/bin/httpd.exe -M | Select-String -Pattern 'info_module'"
+        },
+        {
+            "nombre": "Ensure_Basic_And_Digest_Module_Is_Disabled",
+            "desc": "Comprobar que los modulos mod_auth_basic y mod_auth_digest y est\u00e1 deshabilitado. Si est\u00e1 configurado correctamente esto no producir\u00e1 salida alguna",
+            "comando": "APACHE/bin/httpd.exe -M |  Select-String -Pattern 'auth_basic_module|auth_digest_module'"
+        }
+    ],
+    "Configure": [
+        {
+            "nombre": "Ensure_Apache_Web_Server_Non_Root",
+            "desc": "Asegurarse que la cuenta de apache es unica y ha sido creada con un UID menor que el de un usuario normal. Si todo es correcto se imprimir\u00e1: User apache, Group apache, UID_MIN X, uid=Y(apache) gid= Y(apache), groups=48(apache) [EN ESTE CASO X DEBE SER MAYOR QUE Y], con el \u00faltimo comando deberiamos buscar el id de usuario para los procesos apachectl, que deberia coincidir con el archivo de configuracion",
+            "comando": "Select-String -Pattern  '^User|^Group|httpd|^root' APACHE/conf/httpd.conf"
+        },
+        {
+            "nombre": "Ensure_Apache_Directories_And_Files_Are_Root_Owned",
+            "desc": "Asegurarse que los directorios y archivos de apache pertenecen a root.",
+            "comando": "Get-Acl APACHE/ | Select-Object Owner"
+        },
+        {
+            "nombre": "Remediate_Apache_Directories_And_Files_Are_Root_Owned",
+            "desc": "Establecer la pertenencia de los directorios con 'APACHE/' de root",
+            "comando": "takeown /f 'APACHE' /r"
+        },
+        {
+            "nombre": "Ensure_Other_Write_Access_On_Apache_Directories_And_Files_Is_Restricted",
+            "desc": "Identificar archivos y directorios en el directorio Apache con otro acceso de escritura",
+            "comando": "Get-Acl APACHE/| fl"
+        }
+    ],
+    "Minimize_Features": [
+        {
+            "nombre": "Ensure_the_IP_Addresses_for_Listening_for_Requests_are_Specified",
+            "desc": "Asegurarse que las direcciones IP para escuchar peticiones est\u00e1n especificadasLa salida correcta debe mostrar que existe la l\u00ednea 'Listen'",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern '^Listen'"
+        },
+        {
+            "nombre": "Ensure_Browser_Framing_is_Restricted",
+            "desc": "Asegurarse que el marco del navegador est\u00e1 restringido. La salida correcta debe mostrar que el marco del navegador esta restringido",
+            "comando": "Select-String -Pattern X-Frame-Options APACHE/conf/httpd.conf"
+        }
+    ],
+    "Operations": [
+        {
+            "nombre": "Ensure_the_Error_Log_Filename_and_Severity_Level_are_Configured_Correctly",
+            "desc": "Asegurarse que el log de errores y el nivel de severidad est\u00e1n configurados correctamente. Comprobar la linea LogLevel y ErrorLog",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern 'LogLevel/|ErrorLog'"
+        },
+        {
+            "nombre": "Ensure_a_Syslog_Facility_is_Configured_for_Error_Logging",
+            "desc": "Asegurarse que la facilidad de syslog, est\u00e1 configurada correctamente para guardar errores. Comprobar la linea ErrorLog",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern 'ErrorLog \"syslog'"
+        },
+        {
+            "nombre": "Ensure_the_Server_Access_Log_is_Configured_Correctly",
+            "desc": "Asegurarse que el log de acceso a servidores est\u00e1 configurado correctamente. Comprobar la linea LogFormat",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern '^LogFormat/|^CustomLog'"
+        },
+        {
+            "nombre": "Ensure_ModSecurity_Is_Installed_And_Enabled",
+            "desc": "Asegurarse de que modsecurity esta instalado y habilitado. Se debe mostrar la linea 'security2_module'",
+            "comando": "APACHE/bin/httpd.exe -M | Select-String -Pattern 'security2_module'"
+        }
+    ],
+    "SSL_TLS": [
+        {
+            "nombre": "Ensure_Mod_SSL_And_Mod_NSS_Is_Installed",
+            "desc": "Asegurarse que estan installados mod_ssl y/o mod_nss. El comando deber\u00eda de mostrar ambos o ninguno de los m\u00f3dulos.",
+            "comando": "APACHE/bin/httpd.exe -M | Select-String -Pattern 'ssl_module|nss_module'"
+        },
+        {
+            "nombre": "Ensure_the_Servers_Private_Key_Is_Protected",
+            "desc": "Asegurarse que la clave privada del servidor est\u00e1 protegida",
+            "comando": " type APACHE/conf/httpd.conf | Select-String -Pattern '^SSLCertificateFile/|^SSLCertificateKeyFile' -n"
+        },
+        {
+            "nombre": "Ensure_Weak_SSL_Protocols_are_Disabled",
+            "desc": " Asegurarse que los protocolos SSL d\u00e9biles est\u00e1n desactivados. La salida correcta debe mostrar que esta desactivado",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern '^SSLProtocol'"
+        },
+        {
+            "nombre": "Ensure_Insecure_SSL_Renegotiation_Is_Not_Enabled",
+            "desc": "Asegurarse que las renegociaciones inseguras SSL no est\u00e1n activadas. La salida correcta debe mostrar que esta desactivado",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern '^SSLInsecureRenegotiation'"
+        },
+        {
+            "nombre": "Ensure_SSL_Compression_is_not_Enabled",
+            "desc": "Asegurarse que la compresion SSL no est\u00e1 habilitada. La salida correcta debe mostrar que esta desactivado",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern '^SSLCompression'"
+        },
+        {
+            "nombre": "Ensure_the_Protocols_TLSv1.0_and_TLSv1.1_are_Disabled",
+            "desc": "Asegurarse que los protocolos TLSv1.0 y TLSv1.1 est\u00e1n desactivados. La salida correcta debe mostrar que esta desactivado",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern '^SSLProtocol TLSv1.2 *'"
+        },
+        {
+            "nombre": "Ensure_OSCP_Stabling_is_Enabled",
+            "desc": "Asegurarse que OSCP Stabling est\u00e1 activado. La salida correcta debe mostrar que esta activado",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern '^SSLStaplingCache/|^SSLUseStapling' -n"
+        },
+        {
+            "nombre": "Ensure_HTTP_Strict_Transport_Security_is_Enabled",
+            "desc": "Asegurarse que la seguridad estricta de transporte HTTP est\u00e1 activada. La salida correcta debe mostrar que esta activado",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern '^Header always set Strict-Transport-Security \"max-age/=600/''"
+        }
+    ],
+    "Information": [
+        {
+            "nombre": "Ensure_ServerTokens_is_Set_to_Prod_or_ProductOnly",
+            "desc": "Asegurarse que los ServerTokens est\u00e1n marcados como prod o productonly. La salida correcta debe mostrar que esta en prod o productonly",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern '^ServerTokens'"
+        },
+        {
+            "nombre": "Ensure_ServerSignature_is_not_Enabled",
+            "desc": "Asegurarse que ServerSignature no est\u00e1 habilitado. La salida correcta debe mostrar que no est\u00e1 habilitado serversignature",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern '^ServerSignature Off'"
+        },
+        {
+            "nombre": "Ensure_All_Default_Apache_Content_Is_Removed",
+            "desc": "Asegurarse que todo el contenido base de apache est\u00e1 eliminado. La salida correcta debe mostrar que el contenido base de apache no est\u00e1",
+            "comando": " type APACHE/conf/httpd.conf | Select-String -Pattern 'Include conf/extra/httpd-autoindex.conf|Alias /icons/ \"/var/www/icons/\"|<Directory \"/var/www/icons\">'"
+        },
+        {
+            "nombre": "Ensure_ETag_Response_Header_Fields_do_not_Include_Inodes",
+            "desc": "Asegurarse que la respuesta ETag no incluye Inodes. La salida correcta debe mostrar que etag no tiene inodes",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern 'FileETag'"
+        }
+    ],
+    "DoS_Mitigations": [
+        {
+            "nombre": "Ensure_Timeout_is_Set_to_10_or_Less",
+            "desc": "Asegurarse que el Timeout esta establecido en 10 o menos. La salida correcta debe mostrar timeout y debe ser menor o igual a 10",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern 'Timeout'"
+        },
+        {
+            "nombre": "Ensure_Keepalive_is_Enabled",
+            "desc": "Asegurarse de que keepalive est\u00e1 habilitado. La salida correcta debe mostrar que Keepalive esta habilitado",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern 'KeepAlive'"
+        },
+        {
+            "nombre": "Ensure_MaxKeepAliveRequests_is_Set_To_100_or_Greater",
+            "desc": "Asegurarse que maxkeepaliverequests est\u00e1 establecido en 100 o m\u00e1s. La salida correcta debe mostrar que maxkeepaliverequests es 100 o menos",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern 'MaxKeepAliveRequests'"
+        },
+        {
+            "nombre": "Ensure_KeepAlive_Amount_is_Set_To_15_or_Less",
+            "desc": "Asegurarse que keepalive amount est\u00e1 establecido en 15 o menos. La salida correcta debe mostrar que keepalive amount es 15 o menos",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern 'KeepAliveTimeout'"
+        },
+        {
+            "nombre": "Ensure_the_Timeout_Limits_for_Request_Headers_is_Set_To_40_or_Less",
+            "desc": "Asegurarse que los limites de tiempo para cabeceros de peticiones est\u00e1n establecidos en 40 o menos. La salida correcta debe mostrar que requestreadtimeout es 40 o menos",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern 'RequestReadTimeout'"
+        }
+    ],
+    "Request_Limits": [
+        {
+            "nombre": "Ensure_LimitRequestLine_directive_is_Set_to_512_or_Less",
+            "desc": "Asegurarse que la directiva limitrequestline est\u00e9 marcada como 512 o menos. La salida correcta debe mostrar que limitrequest es 512 o menos",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern 'LimitRequestline'"
+        },
+        {
+            "nombre": "Ensure_LimitRequestFields_directive_is_Set_to_100_or_Less",
+            "desc": "Asegurarse que la directiva limitrequestfields est\u00e9 marcada como 100 o menos. La salida correcta debe mostrar que limitrequest es 100 o menos",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern 'LimitRequestFields'"
+        },
+        {
+            "nombre": "Ensure_LimitRequestFieldsize_directive_is_Set_to_1024_or_Less",
+            "desc": "Asegurarse que la directiva limitrequestfieldsize est\u00e9 marcada como 1024 o menos. La salida correcta debe mostrar que limitrequestfieldsize es 1024 o menos",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern 'LimitRequestFieldSize'"
+        },
+        {
+            "nombre": "Ensure_LimitRequestBody_directive_is_Set_to_102400_or_Less",
+            "desc": "Asegurarse que la directiva limitrequestbody est\u00e9 marcada como 102400 o menos. La salida correcta debe mostrar que limitrequestbody es 102400 o menos",
+            "comando": "type APACHE/conf/httpd.conf | Select-String -Pattern 'LimitRequestBody'"
+        }
+    ],
+    "Others": [],
+    "Imported": [
+    ]
+}

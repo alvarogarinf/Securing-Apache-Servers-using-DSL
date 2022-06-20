@@ -1,0 +1,323 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>json_manager &#8212; DSL (Lenguaje de Dominio Específico) para configurar un servidor de forma segura  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for json_manager</h1><div class="highlight"><pre>
+<span></span><span class="c1"># json_manager.py</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">lang</span>
+
+
+<span class="n">file</span> <span class="o">=</span> <span class="s2">&quot;comandosApacheWindows.json&quot;</span> <span class="k">if</span> <span class="n">lang</span><span class="o">.</span><span class="n">check_os</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;comandosApache&quot;</span> <span class="o">+</span> <span class="n">lang</span><span class="o">.</span><span class="n">check_linux_os</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module is used to work with the json files and help other modules that need this task.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="get_modules_json"><a class="viewcode-back" href="../json_manager.html#json_manager.get_modules_json">[docs]</a><span class="k">def</span> <span class="nf">get_modules_json</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Get the modules from the json file of the commands</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    none</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    dict:All the modules that are inside the json file</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+        <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">json_data</span></div>
+
+
+<div class="viewcode-block" id="get_modules"><a class="viewcode-back" href="../json_manager.html#json_manager.get_modules">[docs]</a><span class="k">def</span> <span class="nf">get_modules</span><span class="p">(</span><span class="n">module_to_use</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get all the modules as a list, which name is the same as the parameter</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    module_to_use (string): The module which name is used to extract th</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    list: Returns the modules that are inside the module which is the parameter</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">modules_json</span> <span class="o">=</span> <span class="n">get_modules_json</span><span class="p">()</span>
+    <span class="n">dictionary</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">modules</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">modulesList</span> <span class="ow">in</span> <span class="n">modules_json</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">modulesList</span><span class="p">:</span>
+            <span class="n">module</span><span class="p">[</span><span class="s1">&#39;namespace&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">module_to_use</span>
+            <span class="n">dictionary</span><span class="p">[</span><span class="n">module</span><span class="p">[</span><span class="s1">&#39;namespace&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">modules</span></div>
+
+
+<div class="viewcode-block" id="get_all_modules"><a class="viewcode-back" href="../json_manager.html#json_manager.get_all_modules">[docs]</a><span class="k">def</span> <span class="nf">get_all_modules</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Get all the modules as a list</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    none</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    list: Return all the modules of the system as a list</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">modules_json</span> <span class="o">=</span> <span class="n">get_modules_json</span><span class="p">()</span>
+    <span class="n">modules</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">modulesList</span> <span class="ow">in</span> <span class="n">modules_json</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">modulesList</span><span class="p">:</span>
+            <span class="n">modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">modules</span></div>
+
+
+<div class="viewcode-block" id="write_new_command"><a class="viewcode-back" href="../json_manager.html#json_manager.write_new_command">[docs]</a><span class="k">def</span> <span class="nf">write_new_command</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">comando</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This method will write the new command into the JSON file</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    name (String): Name of the command that needs to be written</span>
+<span class="sd">    desc (String): Description of the command</span>
+<span class="sd">    comando (String): Actual command that will be run</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    nothing</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">entry</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;nombre&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+        <span class="s2">&quot;desc&quot;</span><span class="p">:</span> <span class="n">desc</span><span class="p">,</span>
+        <span class="s2">&quot;comando&quot;</span><span class="p">:</span> <span class="n">comando</span>
+    <span class="p">}</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">others</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Others&quot;</span><span class="p">)</span>
+        <span class="n">others</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="n">new_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">new_data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="append_import_to_file"><a class="viewcode-back" href="../json_manager.html#json_manager.append_import_to_file">[docs]</a><span class="k">def</span> <span class="nf">append_import_to_file</span><span class="p">(</span><span class="n">entries</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Method to append to the file &quot;Import&quot; zone, which will add in the &quot;Import&quot; section the needed entries</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    entries (array of json): Entries that will be append into the file</span>
+<span class="sd">    filename (String): Name of the file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    nothing</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">others</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Imports&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">entry</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">others</span><span class="p">:</span>
+                <span class="n">others</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">lang</span><span class="o">.</span><span class="n">get_mensajes</span><span class="p">(</span><span class="s2">&quot;IMPORT_PROBLEM&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">entry</span><span class="p">[</span>
+                    <span class="s1">&#39;nombre&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">lang</span><span class="o">.</span><span class="n">get_mensajes</span><span class="p">(</span><span class="s2">&quot;IMPORT_ALREADY_EXISTS&quot;</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">lang</span><span class="o">.</span><span class="n">get_mensajes</span><span class="p">(</span><span class="s2">&quot;ADD_COMMAND_MANUALLY + filename&quot;</span><span class="p">))</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="n">new_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">new_data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="export_into"><a class="viewcode-back" href="../json_manager.html#json_manager.export_into">[docs]</a><span class="k">def</span> <span class="nf">export_into</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Export list of commands into the file</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    list (list): List of commands that will be exported</span>
+<span class="sd">    filename (String): Name of the file that will receive the commands</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    nothing</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">get_all_modules</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">module</span><span class="p">[</span><span class="s1">&#39;nombre&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">command</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="n">entry</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;nombre&quot;</span><span class="p">:</span> <span class="n">module</span><span class="p">[</span><span class="s1">&#39;nombre&#39;</span><span class="p">],</span>
+                    <span class="s2">&quot;desc&quot;</span><span class="p">:</span> <span class="n">module</span><span class="p">[</span><span class="s1">&#39;desc&#39;</span><span class="p">],</span>
+                    <span class="s2">&quot;comando&quot;</span><span class="p">:</span> <span class="n">module</span><span class="p">[</span><span class="s1">&#39;comando&#39;</span><span class="p">]</span>
+                <span class="p">}</span>
+                <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+    <span class="n">append_import_to_file</span><span class="p">(</span><span class="n">entries</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="import_into"><a class="viewcode-back" href="../json_manager.html#json_manager.import_into">[docs]</a><span class="k">def</span> <span class="nf">import_into</span><span class="p">(</span><span class="n">command_list</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Import command list into the json file</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    command_list (list): List of commands that will be imported</span>
+<span class="sd">    filename (String): Name of the file that the commands will be imported into</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    none</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+        <span class="n">modules_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+
+    <span class="n">modules</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">modulesList</span> <span class="ow">in</span> <span class="n">modules_json</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">modulesList</span><span class="p">:</span>
+            <span class="n">modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+
+    <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">command_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">entry</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;nombre&quot;</span><span class="p">:</span> <span class="n">module</span><span class="p">[</span><span class="s1">&#39;nombre&#39;</span><span class="p">],</span>
+                <span class="s2">&quot;desc&quot;</span><span class="p">:</span> <span class="n">module</span><span class="p">[</span><span class="s1">&#39;desc&#39;</span><span class="p">],</span>
+                <span class="s2">&quot;comando&quot;</span><span class="p">:</span> <span class="n">module</span><span class="p">[</span><span class="s1">&#39;comando&#39;</span><span class="p">]</span>
+            <span class="p">}</span>
+            <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">command_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">module</span><span class="p">[</span><span class="s1">&#39;nombre&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">command</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                    <span class="n">entry</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;nombre&quot;</span><span class="p">:</span> <span class="n">module</span><span class="p">[</span><span class="s1">&#39;nombre&#39;</span><span class="p">],</span>
+                        <span class="s2">&quot;desc&quot;</span><span class="p">:</span> <span class="n">module</span><span class="p">[</span><span class="s1">&#39;desc&#39;</span><span class="p">],</span>
+                        <span class="s2">&quot;comando&quot;</span><span class="p">:</span> <span class="n">module</span><span class="p">[</span><span class="s1">&#39;comando&#39;</span><span class="p">]</span>
+                    <span class="p">}</span>
+                    <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+
+    <span class="n">append_import_to_file</span><span class="p">(</span><span class="n">entries</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="conf"><a class="viewcode-back" href="../json_manager.html#json_manager.conf">[docs]</a><span class="k">def</span> <span class="nf">conf</span><span class="p">(</span><span class="n">term</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This methods is used to get the specific paths of the apache folder to run the commands</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    term (String): Term that will be checked for keywords in case it needs to change a path</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    string: the term corrected with the actual path</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">((</span><span class="s2">&quot;conf/configuration&quot;</span><span class="o">+</span><span class="n">lang</span><span class="o">.</span><span class="n">os</span><span class="p">))</span>
+    <span class="n">apache</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">term</span> <span class="o">==</span> <span class="s2">&quot;APACHE&quot;</span><span class="p">:</span>
+        <span class="n">apache</span> <span class="o">=</span> <span class="n">apache</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;APACHE=&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">apache</span> <span class="o">=</span> <span class="n">apache</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">apache</span> <span class="o">=</span> <span class="n">apache</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">apache</span>
+    <span class="k">if</span> <span class="n">term</span> <span class="o">==</span> <span class="s2">&quot;PASSWORD&quot;</span><span class="p">:</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">password</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;PASSWORD=&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">password</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">password</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">password</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">DSL (Lenguaje de Dominio Específico) para configurar un servidor de forma segura</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Pruebas</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Álvaro G. Infante.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

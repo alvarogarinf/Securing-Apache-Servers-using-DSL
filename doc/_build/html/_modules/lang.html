@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>lang &#8212; DSL (Lenguaje de Dominio Específico) para configurar un servidor de forma segura  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for lang</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json_manager</span>
+
+<span class="kn">import</span> <span class="nn">ctypes</span>
+<span class="kn">import</span> <span class="nn">locale</span>
+<span class="kn">import</span> <span class="nn">distro</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module is used as a utils module, meaning that it will store the terms of the language, but it will also</span>
+<span class="sd">check the operating system and get the running language of the outer system.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="check_os"><a class="viewcode-back" href="../lang.html#lang.check_os">[docs]</a><span class="k">def</span> <span class="nf">check_os</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Check which OS is being used by the system</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    none</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    int: Returns 1 if it is windows or 0 if it is not</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="nb">__import__</span><span class="p">(</span><span class="s1">&#39;os&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;nt&#39;</span> <span class="k">else</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="check_linux_os"><a class="viewcode-back" href="../lang.html#lang.check_linux_os">[docs]</a><span class="k">def</span> <span class="nf">check_linux_os</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Check which linux system is being run</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    none</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    String:Return the linux distribution</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="s1">&#39;Ubuntu&#39;</span>
+    <span class="k">if</span> <span class="n">distro</span><span class="o">.</span><span class="n">linux_distribution</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Ubuntu&#39;</span><span class="p">:</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="s1">&#39;Ubuntu&#39;</span>
+    <span class="k">if</span> <span class="n">distro</span><span class="o">.</span><span class="n">linux_distribution</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;CentOS Linux&#39;</span><span class="p">:</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="s1">&#39;Centos&#39;</span>
+    <span class="k">return</span> <span class="n">dist</span></div>
+
+
+<span class="n">os</span> <span class="o">=</span> <span class="s2">&quot;Windows&quot;</span> <span class="k">if</span> <span class="n">check_os</span><span class="p">()</span> <span class="k">else</span> <span class="n">check_linux_os</span><span class="p">()</span>
+
+<span class="n">mensajes_español</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;WELCOME_MESSAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;Bienvenido al DSL version &quot;</span> <span class="o">+</span> <span class="n">os</span><span class="p">,</span>
+    <span class="s2">&quot;START_MESSAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;Escriba a continuación las órdenes del lenguaje (help para ayuda)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;EXIT_MESSAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;Pulsa la letra x para cerrar la aplicación o ENTER para continuar escribiendo: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CHECK_NAME_IS_UNIQUE&quot;</span><span class="p">:</span> <span class="s2">&quot;El nombre del comando debe ser unico, ya existe un comando con el nombre &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;INTRODUCE_DESC&quot;</span><span class="p">:</span> <span class="s2">&quot;Introduce una descripción del nuevo comando: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;INTRODUCE_ORDERS&quot;</span><span class="p">:</span> <span class="s2">&quot;Introduce las ordenes exactas que debe ejecutar el sistema &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PARAM_ADVISE&quot;</span><span class="p">:</span> <span class="s2">&quot;(si tiene algún parámetro variable el comando, recuerda escribir PARAM en el sitio donde se situe el parámetro):&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_1&quot;</span><span class="p">:</span> <span class="s2">&quot;En caso de necesitar ayuda sobre un comando cualquiera X, escribir help X&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_2&quot;</span><span class="p">:</span> <span class="s2">&quot;En caso de querer definir una actualización sobre un comando Y, escribir create Y&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_3&quot;</span><span class="p">:</span> <span class="s2">&quot;En caso de querer usar un comando, escribir primero el nombre del grupo de comando por ejemplo: AppArmor, después el comando concreto por ejemplo: Ensure_AppArmor_Is_Enabled&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_4&quot;</span><span class="p">:</span> <span class="s2">&quot;En caso de desconocer el sistema, existe una opción de correr un conjunto de comandos con la orden: run level1 o run level2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_5&quot;</span><span class="p">:</span> <span class="s2">&quot;En caso de querer exportar un comando o conjunto de comandos usar la orden: export nombre_del_comando_1, nombre_del_comando2, ... into nombre_del_archivo&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_6&quot;</span><span class="p">:</span> <span class="s2">&quot;En caso de querer importar un comando usar la orden: import from nombre_del_archivo_1 nombre_del_comando_1, nombre_del_comando2, ... . Si no se especifica que comandos importar, se importarán todos&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_7&quot;</span><span class="p">:</span> <span class="s2">&quot;Para ejecutar todos los comandos, pulsar la tecla ENTER dos veces, con una vez se cambia de línea&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_8&quot;</span><span class="p">:</span> <span class="s2">&quot;Si quieres cambiar el idioma escribir set language LANGUAGE. Siendo LANGUAGE el mensaje al que cambiar (Solo están disponibles Español e Inglés)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;EXECUTED_ORDER_IS&quot;</span><span class="p">:</span> <span class="s2">&quot;La orden ejecutada es la siguiente: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;THERE_IS_NOT_FILE&quot;</span><span class="p">:</span> <span class="s2">&quot;No existe ningun archivo: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;YOU_NEED_ROOT&quot;</span><span class="p">:</span> <span class="s2">&quot;Para ejecutar el comando especificado, se necesita ser root&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;IMPORT_PROBLEM&quot;</span><span class="p">:</span> <span class="s2">&quot;Hubo un problema al importar el comando: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;IMPORT_ALREADY_EXISTS&quot;</span><span class="p">:</span> <span class="s2">&quot; ,ya existe un comando con ese nombre en la sección Imports&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ADD_COMMAND_MANUALLY&quot;</span><span class="p">:</span> <span class="s2">&quot;Agregar el comando de forma manual modificando el JSON: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TOO_LITTLE_TERMS&quot;</span><span class="p">:</span> <span class="s1">&#39;Muy pocos términos, solo el mensaje general de ayuda debe estar definido por un único comando help&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;CREATE_PROBLEM&quot;</span><span class="p">:</span> <span class="s2">&quot;En caso de necesitar crear un comando se usa create X, siendo X el nombre del comando&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_PROBLEM&quot;</span><span class="p">:</span> <span class="s2">&quot;En caso de necesitar usar ayuda de un comando se usa help X, siendo X el nombre del comando&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RUN_GRAMMAR&quot;</span><span class="p">:</span> <span class="s2">&quot;En caso de querer combinaciones de paquetes, necesitas especificar que combinacion: level1 o level2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RUN_PROBLEM&quot;</span><span class="p">:</span> <span class="s2">&quot;Las combinaciones de paquete solo pueden ser o level1 o level2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;EXPORT_PROBLEM&quot;</span><span class="p">:</span> <span class="s2">&quot;El comando export debe tener la siguiente estructura: export nombre_del_comando_1, nombre_del_comando2, ... into nombre_del_archivo&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;FIRST_TERM_DOES_NOT_MATCH&quot;</span><span class="p">:</span> <span class="s2">&quot;El primer término no corresponde con ninguno del lenguaje&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;FIRST_TERM_DOES_NOT_MATCH_MAYBE&quot;</span><span class="p">:</span> <span class="s2">&quot;El primer término no corresponde con ninguno del lenguaje. Quizás quisiste decir: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SECOND_TERM_DOES_NOT_MATCH&quot;</span><span class="p">:</span> <span class="s2">&quot;El segundo término no corresponde con ninguno del lenguaje&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SECOND_TERM_DOES_NOT_MATCH_MAYBE&quot;</span><span class="p">:</span> <span class="s2">&quot;El segundo término no corresponde con ninguno del lenguaje. Quizás quisiste decir: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PARAM_ERRORS&quot;</span><span class="p">:</span> <span class="s2">&quot;Se ha producido un error con el número de parámetros, la función en la línea: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MUST_HAVE&quot;</span><span class="p">:</span> <span class="s2">&quot; debe tener &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PARAMS&quot;</span><span class="p">:</span> <span class="s2">&quot; parámetros&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LANGUAGE_PROBLEM&quot;</span><span class="p">:</span> <span class="s2">&quot;Si quieres cambiar el idioma escribir set language LANGUAGE. Siendo LANGUAGE el mensaje al que cambiar (Solo están disponibles Español e Inglés)&quot;</span>
+
+<span class="p">}</span>
+
+<span class="n">mensajes_ingles</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;WELCOME_MESSAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;Welcome to DSL version &quot;</span> <span class="o">+</span> <span class="n">os</span><span class="p">,</span>
+    <span class="s2">&quot;START_MESSAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;Write here the orders for the language (type help for help)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;EXIT_MESSAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;Type letter x to close the app or ENTER to continue: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CHECK_NAME_IS_UNIQUE&quot;</span><span class="p">:</span> <span class="s2">&quot;The name of the command must be unique, there is already a command with the name )&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;INTRODUCE_DESC&quot;</span><span class="p">:</span> <span class="s2">&quot;Introduce a description of the new command: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;INTRODUCE_ORDERS&quot;</span><span class="p">:</span> <span class="s2">&quot;Introduce las ordenes exactas que debe ejecutar el sistema &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PARAM_ADVISE&quot;</span><span class="p">:</span> <span class="s2">&quot;(if the command has any parameter, remember to type PARAM in the correct place):&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_1&quot;</span><span class="p">:</span> <span class="s2">&quot;In case of needing help of a command X, type Help x&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_2&quot;</span><span class="p">:</span> <span class="s2">&quot;In case of wanting to define a new command with name Y, write create Y&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_3&quot;</span><span class="p">:</span> <span class="s2">&quot;If you need to use a command, write first the name of the command, for example: AppArmor, then the concrete command, like this: Ensure_AppArmor_Is_Enabled&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_4&quot;</span><span class="p">:</span>
+        <span class="s2">&quot;In case of not knowing the system, there is an option to run several basic commands at the same time with the order: run level1 o run level2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_5&quot;</span><span class="p">:</span> <span class="s2">&quot;In case of wanting to export a command or a set of commands use the order: export name_of_command_1, name_of_command_2, ... into name_of_file&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_6&quot;</span><span class="p">:</span>
+        <span class="s2">&quot;In case of wanting to import a command use the order: import from name_of_file name_of_command_1, name_of_command_2, ... . If the name of the command is not specified, all commands will be imported&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_7&quot;</span><span class="p">:</span> <span class="s2">&quot;In order to execute all commands, type ENTER two times, with one ENTER you change line&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_8&quot;</span><span class="p">:</span> <span class="s2">&quot;If you want to change the language write: set language LANGUAGE. LANGUAGE being the desired language (Only English and Spanish are available)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;EXECUTED_ORDER_IS&quot;</span><span class="p">:</span> <span class="s2">&quot;The executed order is the following one: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;THERE_IS_NOT_FILE&quot;</span><span class="p">:</span> <span class="s2">&quot;That file does not exist: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;YOU_NEED_ROOT&quot;</span><span class="p">:</span> <span class="s2">&quot;You need to be root to execute the specified command&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;IMPORT_PROBLEM&quot;</span><span class="p">:</span> <span class="s2">&quot;The import command must have the following structure: import from name_of_file_1 name_of_command_1, name_of_command_2, ... . If the commands are not specified, all commands will be imported&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;IMPORT_ALREADY_EXISTS&quot;</span><span class="p">:</span> <span class="s2">&quot; ,there is already a command with that name in section Imports&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ADD_COMMAND_MANUALLY&quot;</span><span class="p">:</span> <span class="s2">&quot;Add the command manually modifying the JSON: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TOO_LITTLE_TERMS&quot;</span><span class="p">:</span> <span class="s2">&quot;Very few terms, only the general help message should be defined by a single command help&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CREATE_PROBLEM&quot;</span><span class="p">:</span> <span class="s2">&quot;In case you need to create a command you use create x where x is the name of the command&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HELP_PROBLEM&quot;</span><span class="p">:</span> <span class="s2">&quot;In case you need to use help for a command use help X, being X the name of the command&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RUN_GRAMMAR&quot;</span><span class="p">:</span> <span class="s2">&quot;In case you want to run combinations of packagesm you need to specify: level1 or level2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RUN_PROBLEM&quot;</span><span class="p">:</span> <span class="s2">&quot;The combinations of packages can only be level1 or level2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;EXPORT_PROBLEM&quot;</span><span class="p">:</span> <span class="s2">&quot;The command export must have the following structure: export name_of_command_1, name_of_command_2, ... into name_of_file_1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;IMPORT_PROBLEM&quot;</span><span class="p">:</span> <span class="s2">&quot;The import command must have the following structure: import from name_of_file_1 name_of_command_1, name_of_command_2, ... . If the commands are not specified, all commands will be imported&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;FIRST_TERM_DOES_NOT_MATCH&quot;</span><span class="p">:</span> <span class="s2">&quot;The first term does not match any in the language&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;FIRST_TERM_DOES_NOT_MATCH_MAYBE&quot;</span><span class="p">:</span> <span class="s2">&quot;The first term does not match any in the language. Maybe you mean: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SECOND_TERM_DOES_NOT_MATCH&quot;</span><span class="p">:</span> <span class="s2">&quot;The second term does not match any in the language.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SECOND_TERM_DOES_NOT_MATCH_MAYBE&quot;</span><span class="p">:</span> <span class="s2">&quot;The second term does not match any in the language. Maybe you mean: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PARAM_ERRORS&quot;</span><span class="p">:</span> <span class="s2">&quot;There has been an error with the number of parameters, the function in the line: &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MUST_HAVE&quot;</span><span class="p">:</span> <span class="s2">&quot; must have &quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PARAMS&quot;</span><span class="p">:</span> <span class="s2">&quot; params&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LANGUAGE_PROBLEM&quot;</span><span class="p">:</span> <span class="s2">&quot;If you want to change the language write: set language LANGUAGE. LANGUAGE being the desired language (Only English and Spanish are available)&quot;</span><span class="p">,</span>
+
+<span class="p">}</span>
+
+<span class="n">aux</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="get_mensajes"><a class="viewcode-back" href="../lang.html#lang.get_mensajes">[docs]</a><span class="k">def</span> <span class="nf">get_mensajes</span><span class="p">(</span><span class="n">term</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the message in the correct language</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    term (String): Name of the term to be returned</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    String: Message to be returned</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">detect_language</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Español&#39;</span> <span class="ow">or</span> <span class="n">detect_language</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Spanish&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mensajes_español</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">term</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mensajes_ingles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">term</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="detect_language"><a class="viewcode-back" href="../lang.html#lang.detect_language">[docs]</a><span class="k">def</span> <span class="nf">detect_language</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Method to detect the language of the system</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    none</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    String: Language of the system</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;español&quot;</span> <span class="ow">or</span> <span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;spanish&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Español&quot;</span>
+    <span class="k">if</span> <span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;english&quot;</span> <span class="ow">or</span> <span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;ingles&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;English&quot;</span>
+    <span class="n">windll</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">windll</span><span class="o">.</span><span class="n">kernel32</span>
+    <span class="k">if</span> <span class="n">locale</span><span class="o">.</span><span class="n">windows_locale</span><span class="p">[</span><span class="n">windll</span><span class="o">.</span><span class="n">GetUserDefaultUILanguage</span><span class="p">()]</span> <span class="o">==</span> <span class="s1">&#39;es_ES&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Español&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;English&quot;</span></div>
+
+
+<div class="viewcode-block" id="set_language"><a class="viewcode-back" href="../lang.html#lang.set_language">[docs]</a><span class="k">def</span> <span class="nf">set_language</span><span class="p">(</span><span class="n">param</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set the language of the system</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    param (string): Language</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    nothing</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">DSL (Lenguaje de Dominio Específico) para configurar un servidor de forma segura</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Pruebas</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Álvaro G. Infante.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,378 @@
+{
+  "Installation": [
+    {
+      "nombre": "Check_Server_Is_Not_Multi_Use_System",
+      "desc": "Asegurarse de que el servidor no es de multiuso. Se muestra la lista de servicios activos",
+      "comando": "chkconfig --list | grep ':on'"
+    },
+    {
+      "nombre": "Remediate_Server_Is_Not_Multi_Use_System",
+      "desc": "En caso de que haya algun servicio que no deba estar activado, pasarlo como parametro",
+      "comando": "sudo chkconfig PARAM off"
+    },
+    {
+      "nombre": "Ensure_Apache_Is_Installed_Appropriately",
+      "desc": "Asegurarse de que Apache ha sido instalado de los archivos binarios apropiados. Se comprobar\u00e1 si est\u00e1 instalado Apache, sino se instalar\u00e1",
+      "comando": "sudo yum install httpd"
+    }
+  ],
+  "Minimize_Modules": [
+    {
+      "nombre": "Ensure_Only_Necessary_Authentication_And_Authorization_Modules_Are_Enabled",
+      "desc": "Asegurarse que solo los m\u00f3dulos necesarios de autorizacion y autenticacion est\u00e1n habilitados. La salida deber\u00eda mostrar el m\u00f3dulo auth y ldap",
+      "comando": "httpd -M | egrep 'auth._|ldap'"
+    },
+    {
+      "nombre": "Ensure_Log_Config_Module_Is_Enabled",
+      "desc": "Asegurarse que el modulo log_config est\u00e1 habilitado. La salida deber\u00eda mostrar el m\u00f3dulo ",
+      "comando": "httpd -M | grep log_config"
+    },
+    {
+      "nombre": "Ensure_WebDAV_Modules_Are_Disabled",
+      "desc": "Comprobar que los m\u00f3dulos WebDAV est\u00e1n desactivados.  La salida correcta no deber\u00eda mostrar nada",
+      "comando": "httpd -M | grep ' dav_[[:print:]]+module'"
+    },
+    {
+      "nombre": "Ensure_Status_Module_Is_Disabled",
+      "desc": "Comprobar que el modulo mod_status est\u00e1 deshabilitado. Si est\u00e1 configurado correctamente esto no producir\u00e1 salida alguna",
+      "comando": "httpd -M | egrep 'status_module'"
+    },
+    {
+      "nombre": "Ensure_Autoindex_Module_Is_Disabled",
+      "desc": "Comprobar que el modulo autoindex est\u00e1 deshabilitado. Si est\u00e1 configurado correctamente esto no producir\u00e1 salida alguna",
+      "comando": "httpd -M | grep autoindex_module"
+    },
+    {
+      "nombre": "Ensure_Proxy_Module_Is_Disabled",
+      "desc": "Comprobar que el modulo proxy est\u00e1 deshabilitado. Si est\u00e1 configurado correctamente esto no producir\u00e1 salida alguna",
+      "comando": "httpd -M | grep proxy_"
+    },
+    {
+      "nombre": "Ensure_User_Directories_Module_Is_Disabled",
+      "desc": "Comprobar que el modulo user_dir est\u00e1 deshabilitado. Si est\u00e1 configurado correctamente esto no producir\u00e1 salida alguna",
+      "comando": "httpd -M | grep userdir_"
+    },
+    {
+      "nombre": "Ensure_Info_Module_Is_Disabled",
+      "desc": "Comprobar que el modulo mod_info est\u00e1 deshabilitado. Si est\u00e1 configurado correctamente esto no producir\u00e1 salida alguna",
+      "comando": "httpd -M | egrep 'info_module'"
+    },
+    {
+      "nombre": "Ensure_Basic_And_Digest_Module_Is_Disabled",
+      "desc": "Comprobar que los modulos mod_auth_basic y mod_auth_digest y est\u00e1 deshabilitado. Si est\u00e1 configurado correctamente esto no producir\u00e1 salida alguna",
+      "comando": "httpd -M |  egrep 'auth_basic_module|auth_digest_module'"
+    }
+  ],
+  "Configure": [
+    {
+      "nombre": "Ensure_Apache_Web_Server_Non_Root",
+      "desc": "Asegurarse que la cuenta de apache es unica y ha sido creada con un UID menor que el de un usuario normal. Si todo es correcto se imprimir\u00e1: User apache, Group apache, UID_MIN X, uid=Y(apache) gid= Y(apache), groups=48(apache) [EN ESTE CASO X DEBE SER MAYOR QUE Y], con el \u00faltimo comando deberiamos buscar el id de usuario para los procesos apachectl, que deberia coincidir con el archivo de configuracion",
+      "comando": "grep -i '^User' APACHE/conf/httpd.conf | grep -i '^Group' APACHE/conf/httpd.conf | ps axu | grep httpd | grep -v '^root'"
+    },
+    {
+      "nombre": "Remediate_Apache_Web_Server_Non_Root",
+      "desc": "Se crea el usuario y grupo de apache como un sistema unico ",
+      "comando": "sudo groupadd -r apache | sudo useradd apache -r -g apache -d /var/www -s /sbin/nologin"
+    },
+    {
+      "nombre": "Ensure_Apache_User_Account_Has_Invalid_Shell",
+      "desc": "Asegurarse que la cuenta de apache tiene un shell que no funciona. La salida del comando debe ser similar a los siguiente: /etc/passwd:apache:x:48:48:Apache:/var/www:/sbin/nologin",
+      "comando": "grep apache PASSWORD"
+    },
+    {
+      "nombre": "Remediate_Apache_User_Account_Has_Invalid_Shell",
+      "desc": "Forzar a la cuenta Apache a usar el nologin shell",
+      "comando": "sudo chsh -s /sbin/nologin apache"
+    },
+    {
+      "nombre": "Ensure_Apache_User_Account_Is_Locked",
+      "desc": "La cuenta de usuario en la que corre apache no deberia tener una contrase\u00f1a valida, deberia ser bloqueada. El resultado seria algo similar a lo siguiente: apache LK 2010-01-28 0 99999 7 -1 (Password locked.) o apache L 07/02/2012 -1 -1 -1 -1",
+      "comando": "sudo passwd -S apache"
+    },
+    {
+      "nombre": "Remediate_Apache_User_Account_Is_Locked",
+      "desc": "Bloquear la cuenta de usuario que corre apache",
+      "comando": "sudo passwd -l apache"
+    },
+    {
+      "nombre": "Ensure_Apache_Directories_And_Files_Are_Root_Owned",
+      "desc": "Asegurarse que los directorios y archivos de apache pertenecen a root.",
+      "comando": "find APACHE/ ! -user root -ls"
+    },
+    {
+      "nombre": "Remediate_Apache_Directories_And_Files_Are_Root_Owned",
+      "desc": "Establecer la pertenencia de los directorios con 'APACHE/' de root",
+      "comando": "sudo chown -R root APACHE/"
+    },
+    {
+      "nombre": "Ensure_Group_Is_Set_On_Apache_Directories_And_Files",
+      "desc": "Asegurarse que los archivos pertenecen a root",
+      "comando": "find APACHE/ -path APACHE/htdocs -prune -o ! -group root -ls"
+    },
+    {
+      "nombre": "Remediate_Group_Is_Set_On_Apache_Directories_And_Files",
+      "desc": "Establecer la pertenencia de los directorios con 'APACHE/",
+      "comando": "sudo chgrp -R root APACHE/"
+    },
+    {
+      "nombre": "Ensure_Other_Write_Access_On_Apache_Directories_And_Files_Is_Restricted",
+      "desc": "Identificar archivos y directorios en el directorio Apache con otro acceso de escritura",
+      "comando": "find -L APACHE/ ! -type l -perm /o=w -ls"
+    },
+    {
+      "nombre": "Remediate_Other_Write_Access_On_Apache_Directories_And_Files_Is_Restricted",
+      "desc": "Elimina el otro acceso de escritura",
+      "comando": "sudo chmod -R o-w APACHE/"
+    },
+    {
+      "nombre": "Ensure_Group_Write_Access_For_Apache_Directories_And_Files_Is_Restricted",
+      "desc": "Identificar archivos o directorios con acceso de escritura en grupo",
+      "comando": "find -L APACHE/ ! -type l -perm /g=w -ls"
+    },
+    {
+      "nombre": "Remediate_Group_Write_Access_For_Apache_Directories_And_Files_Is_Restricted",
+      "desc": "Eliminar el acceso de escritura en grupo",
+      "comando": "sudo chmod -R g-w APACHE/"
+    }
+  ],
+  "Access_Control": [
+    {
+      "nombre": "Ensure_Access_to_OS_Root_Directory_Is_Denied_By_Default",
+      "desc": "Asegurarse que el acceso al directorio root del sistema operativo se deniega. La salida correcta debe mostrar que existe la l\u00ednea 'Require all denied'",
+      "comando": "perl -ne 'print if /^ *<Directory *\\//i .. /<\\/Directory/i' APACHE/conf/httpd.conf | grep 'Require all denied'"
+    },
+    {
+      "nombre": "Ensure_Override_Is_Disabled_For_The_OS_Root_Directory",
+      "desc": "Asegurarse que no se puede sobrescribir en el directorio root del sistema. La salida correcta debe mostrar que existe la l\u00ednea 'AllowOverrideList'",
+      "comando": "perl -ne 'print if /^ *<Directory *\\//i .. /<\\/Directory/i' APACHE/conf/httpd.conf| grep 'AllowOverrideList'"
+    },
+    {
+      "nombre": "Ensure_Override_Is_Disabled_For_All_Directories",
+      "desc": "Asegurarse que no se puede sobrescribir en todos los directorios. La salida correcta debe mostrar que existe la l\u00ednea 'AllowOverrideList APACHE/conf/httpd.conf'",
+      "comando": "perl -ne 'print if /^ *<Directory *\\//i .. /<\\/Directory/i' APACHE/conf/httpd.conf| grep -i AllowOverrideList APACHE/conf/httpd.conf"
+    }
+  ],
+  "Minimize_Features": [
+    {
+      "nombre": "Ensure_Options_for_the_OS_Root_Directory_are_Restricted",
+      "desc": "Asegurarse que las opciones del directorio root del sistema operativo est\u00e1n restringidas. La salida correcta debe mostrar que Options est\u00e1 establecido como None",
+      "comando": "perl -ne 'print if /^ *<Directory *\\//i .. /<\\/Directory/i' APACHE/conf/httpd.conf | grep 'Options None'"
+    },
+    {
+      "nombre": "Ensure_Options_for_the_Web_Root_Directory_are_Restricted",
+      "desc": "Asegurarse que las opciones del directorio root de la web est\u00e1n restringidas. La salida correcta debe mostrar que existe la l\u00ednea options y que est\u00e1 en modo restricted",
+      "comando": "perl -ne 'print if /^ *<Directory *\\//i .. /<\\/Directory/i' APACHE/conf/httpd.conf | grep 'Options'"
+    },
+    {
+      "nombre": "Ensure_Options_for_Other_Directories_are_Minimized",
+      "desc": "Asegurarse que las opciones de otros directorios son las m\u00ednimas. La salida correcta debe mostrar que la l\u00ednea options debe estar en minimo",
+      "comando": "perl -ne 'print if /^ *<Directory *\\//i .. /<\\/Directory/i' APACHE/conf/httpd.conf | grep 'Options'"
+    },
+    {
+      "nombre": "Ensure_the_IP_Addresses_for_Listening_for_Requests_are_Specified",
+      "desc": "Asegurarse que las direcciones IP para escuchar peticiones est\u00e1n especificadas. La salida correcta debe mostrar que existe la l\u00ednea 'Listen'",
+      "comando": "cat APACHE/conf/httpd.conf | grep '^Listen'"
+    },
+    {
+      "nombre": "Ensure_Browser_Framing_is_Restricted",
+      "desc": "Asegurarse que el marco del navegador est\u00e1 restringido. La salida correcta debe mostrar que el marco del navegador esta restringido",
+      "comando": "grep -i X-Frame-Options APACHE/conf/httpd.conf"
+    }
+  ],
+  "Operations": [
+    {
+      "nombre": "Ensure_the_Error_Log_Filename_and_Severity_Level_are_Configured_Correctly",
+      "desc": "Asegurarse que el log de errores y el nivel de severidad est\u00e1n configurados correctamente. Comprobar la linea LogLevel y ErrorLog",
+      "comando": "cat APACHE/conf/httpd.conf | grep 'LogLevel/|ErrorLog'"
+    },
+    {
+      "nombre": "Ensure_a_Syslog_Facility_is_Configured_for_Error_Logging",
+      "desc": "Asegurarse que la facilidad de syslog, est\u00e1 configurada correctamente para guardar errores. Comprobar la linea ErrorLog",
+      "comando": "cat APACHE/conf/httpd.conf | grep 'ErrorLog \"syslog'"
+    },
+    {
+      "nombre": "Ensure_the_Server_Access_Log_is_Configured_Correctly",
+      "desc": "Asegurarse que el log de acceso a servidores est\u00e1 configurado correctamente.  Comprobar la linea LogFormat",
+      "comando": "cat APACHE/conf/httpd.conf | grep '^LogFormat/|^CustomLog'"
+    },
+    {
+      "nombre": "Ensure_ModSecurity_Is_Installed_And_Enabled",
+      "desc": "Asegurarse de que modsecurity esta instalado y habilitado. Se debe mostrar la linea 'security2_module'",
+      "comando": "httpd -M | grep 'security2_module'"
+    },
+    {
+      "nombre": "Remediate_ModSecurity_Is_Installed_And_Enabled",
+      "desc": "En caso de que no estuviera instalado, instalarlo",
+      "comando": "sudo yum install mod_security -y"
+    }
+  ],
+  "SSL_TLS": [
+    {
+      "nombre": "Ensure_Mod_SSL_And_Mod_NSS_Is_Installed",
+      "desc": "Asegurarse que estan installados mod_ssl y/o mod_nss. El comando deber\u00eda de mostrar ambos o ninguno de los m\u00f3dulos.",
+      "comando": "httpd -M | egrep 'ssl_module|nss_module'"
+    },
+    {
+      "nombre": "Ensure_A_Valid_Trusted_Certificate_Is_Installed",
+      "desc": "Asegurarse que se ha instalado un certificado adecuado. Si es correcto, se mandar\u00eda un OK, en caso de que no lo fuere mostrar\u00eda: 'error 10 at 0 depth lookup:certificate has expired'",
+      "comando": "openssl verify -CAfile /etc/ssl/certs/ca-bundle.crt -purpose sslserver /etc/ssl/certs/example.com.crt"
+    },
+    {
+      "nombre": "Remediate_A_Valid_Trusted_Certificate_Is_Installed",
+      "desc": "Crear un certificado adecuado, se debe pasar como par\u00e1metro el hostname que debe ser usado para el certificado",
+      "comando": "cd /etc/ssl/certs| umask 077| openssl genrsa -aes128 2048 > PARAM"
+    },
+    {
+      "nombre": "Ensure_the_Servers_Private_Key_Is_Protected",
+      "desc": "Asegurarse que la clave privada del servidor est\u00e1 protegida",
+      "comando": " cat APACHE/conf/httpd.conf | grep '^SSLCertificateFile/|^SSLCertificateKeyFile' -n| temp=$(cat APACHE/conf/httpd.conf | grep '^SSLCertificateKeyFile' | cut -d ' ' -f 2)| ls -al $temp "
+    },
+    {
+      "nombre": "Ensure_Weak_SSL_Protocols_are_Disabled",
+      "desc": " Asegurarse que los protocolos SSL d\u00e9biles est\u00e1n desactivados. La salida correcta debe mostrar que esta desactivado",
+      "comando": "cat APACHE/conf/httpd.conf | grep '^SSLProtocol'"
+    },
+    {
+      "nombre": "Ensure_Insecure_SSL_Renegotiation_Is_Not_Enabled",
+      "desc": "Asegurarse que las renegociaciones inseguras SSL no est\u00e1n activadas. La salida correcta debe mostrar que esta desactivado",
+      "comando": "cat APACHE/conf/httpd.conf | grep '^SSLInsecureRenegotiation'"
+    },
+    {
+      "nombre": "Ensure_SSL_Compression_is_not_Enabled",
+      "desc": "Asegurarse que la compresion SSL no est\u00e1 habilitada. La salida correcta debe mostrar que esta desactivado",
+      "comando": "cat APACHE/conf/httpd.conf | grep '^SSLCompression'"
+    },
+    {
+      "nombre": "Ensure_the_Protocols_TLSv1.0_and_TLSv1.1_are_Disabled",
+      "desc": "Asegurarse que los protocolos TLSv1.0 y TLSv1.1 est\u00e1n desactivados. La salida correcta debe mostrar que esta desactivado",
+      "comando": "cat APACHE/conf/httpd.conf | grep '^SSLProtocol TLSv1.2 *'"
+    },
+    {
+      "nombre": "Ensure_OSCP_Stabling_is_Enabled",
+      "desc": "Asegurarse que OSCP Stabling est\u00e1 activado. La salida correcta debe mostrar que esta activado",
+      "comando": "cat APACHE/conf/httpd.conf | grep '^SSLStaplingCache/|^SSLUseStapling' -n"
+    },
+    {
+      "nombre": "Ensure_HTTP_Strict_Transport_Security_is_Enabled",
+      "desc": "Asegurarse que la seguridad estricta de transporte HTTP est\u00e1 activada. La salida correcta debe mostrar que esta activado",
+      "comando": "cat APACHE/conf/httpd.conf | grep '^Header always set Strict-Transport-Security \"max-age/=600/''"
+    }
+  ],
+  "Information": [
+    {
+      "nombre": "Ensure_ServerTokens_is_Set_to_Prod_or_ProductOnly",
+      "desc": "Asegurarse que los ServerTokens est\u00e1n marcados como prod o productonly. La salida correcta debe mostrar que esta en prod o productonly",
+      "comando": "cat APACHE/conf/httpd.conf | grep '^ServerTokens'"
+    },
+    {
+      "nombre": "Ensure_ServerSignature_is_not_Enabled",
+      "desc": "Asegurarse que ServerSignature no est\u00e1 habilitado. La salida correcta debe mostrar que no est\u00e1 habilitado serversignature",
+      "comando": "cat APACHE/conf/httpd.conf | grep '^ServerSignature Off'"
+    },
+    {
+      "nombre": "Ensure_All_Default_Apache_Content_Is_Removed",
+      "desc": "Asegurarse que todo el contenido base de apache est\u00e1 eliminado. La salida correcta debe mostrar que el contenido base de apache no est\u00e1",
+      "comando": " cat APACHE/conf/httpd.conf | grep 'Include conf/extra/httpd-autoindex.conf'| cat APACHE/conf/httpd.conf | grep 'Alias /icons/ \"/var/www/icons/\"'| cat APACHE/conf/httpd.conf | grep '<Directory \"/var/www/icons\">'"
+    },
+    {
+      "nombre": "Ensure_ETag_Response_Header_Fields_do_not_Include_Inodes",
+      "desc": "Asegurarse que la respuesta ETag no incluye Inodes. La salida correcta debe mostrar que etag no tiene inodes",
+      "comando": "cat APACHE/conf/httpd.conf | grep 'FileETag'"
+    }
+  ],
+  "DoS_Mitigations": [
+    {
+      "nombre": "Ensure_Timeout_is_Set_to_10_or_Less",
+      "desc": "Asegurarse que el Timeout esta establecido en 10 o menos. La salida correcta debe mostrar timeout y debe ser menor o igual a 10",
+      "comando": "cat APACHE/conf/httpd.conf | grep 'Timeout'"
+    },
+    {
+      "nombre": "Ensure_Keepalive_is_Enabled",
+      "desc": "Asegurarse de que keepalive est\u00e1 habilitado. La salida correcta debe mostrar que Keepalive esta habilitado",
+      "comando": "cat APACHE/conf/httpd.conf | grep 'KeepAlive'"
+    },
+    {
+      "nombre": "Ensure_MaxKeepAliveRequests_is_Set_To_100_or_Greater",
+      "desc": "Asegurarse que maxkeepaliverequests est\u00e1 establecido en 100 o m\u00e1s. La salida correcta debe mostrar que maxkeepaliverequests es 100 o menos",
+      "comando": "cat APACHE/conf/httpd.conf | grep 'MaxKeepAliveRequests'"
+    },
+    {
+      "nombre": "Ensure_KeepAlive_Amount_is_Set_To_15_or_Less",
+      "desc": "Asegurarse que keepalive amount est\u00e1 establecido en 15 o menos. La salida correcta debe mostrar que keepalive amount es 15 o menos",
+      "comando": "cat APACHE/conf/httpd.conf | grep 'KeepAliveTimeout'"
+    },
+    {
+      "nombre": "Ensure_the_Timeout_Limits_for_Request_Headers_is_Set_To_40_or_Less",
+      "desc": "Asegurarse que los limites de tiempo para cabeceros de peticiones est\u00e1n establecidos en 40 o menos. La salida correcta debe mostrar que requestreadtimeout es 40 o menos",
+      "comando": "cat APACHE/conf/httpd.conf | grep 'RequestReadTimeout'"
+    }
+  ],
+  "Request_Limits": [
+    {
+      "nombre": "Ensure_LimitRequestLine_directive_is_Set_to_512_or_Less",
+      "desc": "Asegurarse que la directiva limitrequestline est\u00e9 marcada como 512 o menos. La salida correcta debe mostrar que limitrequest es 512 o menos",
+      "comando": "cat APACHE/conf/httpd.conf | grep 'LimitRequestline'"
+    },
+    {
+      "nombre": "Ensure_LimitRequestFields_directive_is_Set_to_100_or_Less",
+      "desc": "Asegurarse que la directiva limitrequestfields est\u00e9 marcada como 100 o menos. La salida correcta debe mostrar que limitrequest es 100 o menos",
+      "comando": "cat APACHE/conf/httpd.conf | grep 'LimitRequestFields'"
+    },
+    {
+      "nombre": "Ensure_LimitRequestFieldsize_directive_is_Set_to_1024_or_Less",
+      "desc": "Asegurarse que la directiva limitrequestfieldsize est\u00e9 marcada como 1024 o menos. La salida correcta debe mostrar que limitrequestfieldsize es 1024 o menos",
+      "comando": "cat APACHE/conf/httpd.conf | grep 'LimitRequestFieldSize'"
+    },
+    {
+      "nombre": "Ensure_LimitRequestBody_directive_is_Set_to_102400_or_Less",
+      "desc": "Asegurarse que la directiva limitrequestbody est\u00e9 marcada como 102400 o menos. La salida correcta debe mostrar que limitrequestbody es 102400 o menos",
+      "comando": "cat APACHE/conf/httpd.conf | grep 'LimitRequestBody'"
+    }
+  ],
+  "SELinux": [
+    {
+      "nombre": "Ensure_SELinux_Is_Installed_And_Enabled_Enforcing_Mode",
+      "desc": "Asegurarse de que SELinux se encuentra activado en el estado adecuado. En caso de estarlo deber\u00eda imprimir: 'Current mode: enforcing y Mode from config file: enforcing",
+      "comando": "sestatus | grep -i status"
+    },
+    {
+      "nombre": "Remediate_SELinux_Is_Installed",
+      "desc": "Instalar SELinux",
+      "comando": "sudo yum install selinux-basics selinux-policy-default auditd policycoreutil"
+    },
+    {
+      "nombre": "Remediate_SELinux_Is_Enabled_Enforcing_Mode",
+      "desc": "Modificar el archivo SELinux para activar SELinux y despues ponerlo en modo 'enforcing'",
+      "comando": "echo 'SELINUX=enforcing' >> /etc/selinux/config| setenforce 1"
+    },
+    {
+      "nombre": "Ensure_Apache_Processes_Run_In_httpd_t_Confined_Context",
+      "desc": "Comprobar que todos los procesos httpd est\u00e1n confinados al contexto SELinux httpd_t. La salida debe mostrar que los procesos apache estan confinados al contexto",
+      "comando": "ps -eZ | grep httpd"
+    },
+    {
+      "nombre": "Ensure_httpd_t_Type_Is_Not_In_Permissive_Mode",
+      "desc": "Comprobar que el tipo de proceso de httpd_t no est\u00e1 en modo permisivo. No deber\u00eda haber salida si el comando no est\u00e1 en modo permisivo",
+      "comando": "sudo semodule -l | grep permissive_httpd_t"
+    },
+    {
+      "nombre": "Remediate_httpd_t_Type_Is_Not_In_Permissive_Mode",
+      "desc": "Establecer el tipo de httpd_t a no permisivo",
+      "comando": "sudo semanage permissive -d httpd_t"
+    },
+    {
+      "nombre": "Ensure_Only_Necessary_SELinux_Booleans_Are_Enabled",
+      "desc": "Comprobar que solo estan activados los booleans de SELinux necesarios. Deberia mostrar en estado 'on' solo los siguientes: httpd_builtin_scripting, httpd_dbus_avahi, httpd_tty_comm, http_unified ",
+      "comando": "getsebool -a | grep httpd_ | grep '> on'"
+    },
+    {
+      "nombre": "Remediate_Only_Necessary_SELinux_Booleans_Are_Enabled",
+      "desc": "Desactivar todo el que no sea httpd_builtin_scripting, httpd_dbus_avahi, httpd_tty_comm, http_unified, pasarlos como par\u00e1metro",
+      "comando": "sudo setsebool -P PARAM off"
+    }
+  ],
+  "Others": [
+  ],
+  "Imported": [
+  ]
+}

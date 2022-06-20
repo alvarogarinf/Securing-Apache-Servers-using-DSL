@@ -1,0 +1,422 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dsl &#8212; DSL (Lenguaje de Dominio Específico) para configurar un servidor de forma segura  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for dsl</h1><div class="highlight"><pre>
+<span></span><span class="c1"># dsl.py</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">lexer</span>
+<span class="kn">import</span> <span class="nn">keyboard</span>
+<span class="kn">import</span> <span class="nn">lang</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+
+<span class="n">FLECHA_ARRIBA</span> <span class="o">=</span> <span class="s1">&#39;flecha arriba&#39;</span>
+<span class="n">FLECHA_ABAJO</span> <span class="o">=</span> <span class="s1">&#39;flecha abajo&#39;</span>
+<span class="n">ENTER</span> <span class="o">=</span> <span class="s1">&#39;enter&#39;</span>
+<span class="n">ESPACIO</span> <span class="o">=</span> <span class="s1">&#39;space&#39;</span>
+<span class="n">DELETE</span> <span class="o">=</span> <span class="s1">&#39;backspace&#39;</span>
+<span class="n">SHIFT</span> <span class="o">=</span> <span class="s1">&#39;right shift&#39;</span>
+<span class="n">TAB</span> <span class="o">=</span> <span class="s1">&#39;tab&#39;</span>
+
+<span class="n">FLECHA_ARRIBA_L</span> <span class="o">=</span> <span class="s1">&#39;up&#39;</span>
+<span class="n">FLECHA_ABAJO_L</span> <span class="o">=</span> <span class="s1">&#39;down&#39;</span>
+<span class="n">ENTER_L</span> <span class="o">=</span> <span class="s1">&#39;enter&#39;</span>
+<span class="n">ESPACIO_L</span> <span class="o">=</span> <span class="s1">&#39;space&#39;</span>
+<span class="n">DELETE_L</span> <span class="o">=</span> <span class="s1">&#39;backspace&#39;</span>
+<span class="n">TAB_L</span> <span class="o">=</span> <span class="s1">&#39;tab&#39;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module is used to connect the whole application and made the calls to all the different parts that run in the project.</span>
+<span class="sd">It will control the input of the user and show whatever is necessary, then it will call the lexer to check the grammar.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="welcome_message"><a class="viewcode-back" href="../dsl.html#dsl.welcome_message">[docs]</a><span class="k">def</span> <span class="nf">welcome_message</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; This method is used to inform that the application is running by printing the welcome message</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    none</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    nothing</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">lang</span><span class="o">.</span><span class="n">get_mensajes</span><span class="p">(</span><span class="s2">&quot;WELCOME_MESSAGE&quot;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="start_writing_message"><a class="viewcode-back" href="../dsl.html#dsl.start_writing_message">[docs]</a><span class="k">def</span> <span class="nf">start_writing_message</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;This method is used to inform that the command line is active to receive code by printing the start message</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    none</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    nothing</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">lang</span><span class="o">.</span><span class="n">get_mensajes</span><span class="p">(</span><span class="s2">&quot;START_MESSAGE&quot;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="delete_keys_character_up"><a class="viewcode-back" href="../dsl.html#dsl.delete_keys_character_up">[docs]</a><span class="k">def</span> <span class="nf">delete_keys_character_up</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;This method is used to correct the buffer output when the up arrow is pressed so it does not print its code on the console</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    none</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    nothing</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mf">0.035</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mf">0.035</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="delete_keys_character_down"><a class="viewcode-back" href="../dsl.html#dsl.delete_keys_character_down">[docs]</a><span class="k">def</span> <span class="nf">delete_keys_character_down</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;This method is used to correct the buffer output when the down arrow is pressed so it does not print its code on the console</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    none</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    nothing</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mf">0.035</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mf">0.035</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="delete_keys_character_tab"><a class="viewcode-back" href="../dsl.html#dsl.delete_keys_character_tab">[docs]</a><span class="k">def</span> <span class="nf">delete_keys_character_tab</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;This method is used to correct the buffer output when the tab key is pressed so it does not print its code on the console</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    none</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    nothing</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mf">0.035</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mf">0.035</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="delete_line"><a class="viewcode-back" href="../dsl.html#dsl.delete_line">[docs]</a><span class="k">def</span> <span class="nf">delete_line</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This method is used to correct the buffer output when the line needs to be deleted</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    length (int): Length of the line that needs to be deleted</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    nothing</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="get_input"><a class="viewcode-back" href="../dsl.html#dsl.get_input">[docs]</a><span class="k">def</span> <span class="nf">get_input</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;This method is created as our own version of the native method input(), the main difference with the mentioned method is that</span>
+<span class="sd">    this method does not stop the execution of the machine. We need this in order to access the history of the machine if the user</span>
+<span class="sd">    press the arrow keys or to predict the written word if the user press the TAB key.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    none</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    String:Returning string</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">word_selected</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">word_written</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">keyboard</span><span class="o">.</span><span class="n">read_event</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">event_type</span> <span class="o">==</span> <span class="n">keyboard</span><span class="o">.</span><span class="n">KEY_DOWN</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">if</span> <span class="n">lang</span><span class="o">.</span><span class="n">os</span> <span class="o">==</span> <span class="s1">&#39;Windows&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">ENTER</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ARRIBA</span><span class="p">:</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ABAJO</span><span class="p">:</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="n">ESPACIO</span><span class="p">:</span>
+                    <span class="n">word_written</span> <span class="o">=</span> <span class="n">word_written</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+                <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="n">DELETE</span><span class="p">:</span>
+                    <span class="n">word_written</span> <span class="o">=</span> <span class="n">word_written</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">word_written</span> <span class="o">=</span> <span class="n">word_written</span> <span class="o">+</span> <span class="n">key</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">ENTER_L</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ARRIBA_L</span><span class="p">:</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ABAJO_L</span><span class="p">:</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="n">ESPACIO_L</span><span class="p">:</span>
+                    <span class="n">word_written</span> <span class="o">=</span> <span class="n">word_written</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+                <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="n">DELETE_L</span><span class="p">:</span>
+                    <span class="n">word_written</span> <span class="o">=</span> <span class="n">word_written</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">word_written</span> <span class="o">=</span> <span class="n">word_written</span> <span class="o">+</span> <span class="n">key</span>
+
+            <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lexer</span><span class="o">.</span><span class="n">history</span><span class="p">):</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lexer</span><span class="o">.</span><span class="n">history</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">word_selected</span> <span class="o">=</span> <span class="n">word_written</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ARRIBA</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ARRIBA_L</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ABAJO</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ABAJO_L</span><span class="p">:</span>
+                    <span class="n">word_selected</span> <span class="o">=</span> <span class="n">lexer</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">lexer</span><span class="o">.</span><span class="n">history</span><span class="p">)</span> <span class="o">-</span> <span class="n">count</span><span class="p">]</span>
+                    <span class="n">delete_line</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word_written</span><span class="p">)</span> <span class="o">-</span> <span class="mi">4</span><span class="p">)</span>
+                    <span class="n">word_written</span> <span class="o">=</span> <span class="n">word_selected</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">word_selected</span> <span class="o">=</span> <span class="n">word_written</span>
+
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ARRIBA</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ARRIBA_L</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+                <span class="n">delete_keys_character_up</span><span class="p">()</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ABAJO</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ABAJO_L</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+                <span class="n">delete_keys_character_down</span><span class="p">()</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">TAB</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="n">TAB_L</span><span class="p">:</span>
+                <span class="n">word_selected</span> <span class="o">=</span> <span class="n">lexer</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">word_written</span><span class="p">)</span>
+                <span class="n">aux</span> <span class="o">=</span> <span class="n">word_written</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">aux</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">word_selected</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">word_selected</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+                <span class="n">delete_keys_character_tab</span><span class="p">()</span>
+                <span class="n">delete_line</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word_written</span><span class="p">)</span> <span class="o">-</span> <span class="mi">4</span><span class="p">)</span>
+                <span class="n">word_written</span> <span class="o">=</span> <span class="n">word_selected</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">word_selected</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ARRIBA</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ARRIBA_L</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ABAJO</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="n">FLECHA_ABAJO_L</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">key</span> <span class="o">!=</span> <span class="n">DELETE_L</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">!=</span> <span class="n">DELETE</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">key</span> <span class="o">!=</span> <span class="n">TAB</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">!=</span> <span class="n">TAB_L</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">lang</span><span class="o">.</span><span class="n">os</span> <span class="o">!=</span> <span class="s1">&#39;Windows&#39;</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="n">TAB</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="n">TAB_L</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">lang</span><span class="o">.</span><span class="n">os</span> <span class="o">==</span> <span class="s1">&#39;Windows&#39;</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  &#39;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">word_written</span> <span class="o">!=</span> <span class="n">word_selected</span> <span class="ow">and</span> <span class="n">word_selected</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">word_selected</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">word_written</span></div>
+
+
+<div class="viewcode-block" id="read_input"><a class="viewcode-back" href="../dsl.html#dsl.read_input">[docs]</a><span class="k">def</span> <span class="nf">read_input</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;This method is used to read the console input by lines</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    none</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    String:Returning the output</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">aux</span> <span class="o">=</span> <span class="n">get_input</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">aux</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aux</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+<div class="viewcode-block" id="main_loop"><a class="viewcode-back" href="../dsl.html#dsl.main_loop">[docs]</a><span class="k">def</span> <span class="nf">main_loop</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;This is the main method. It will read the input of the console and then check the grammar with the lexer before calling the interpreter</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    none</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    nothing</span>
+
+<span class="sd">    @author: Álvaro García Infante</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">start_writing_message</span><span class="p">()</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">read_input</span><span class="p">()</span>
+    <span class="n">read_text</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+    <span class="n">lexer</span><span class="o">.</span><span class="n">check_grammar</span><span class="p">(</span><span class="n">read_text</span><span class="p">)</span></div>
+
+
+
+<span class="n">welcome_message</span><span class="p">()</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">while True:</span>
+<span class="sd">    try:</span>
+<span class="sd">        main_loop()</span>
+<span class="sd">    except AssertionError as error:</span>
+<span class="sd">        print(error)</span>
+
+<span class="sd">    print(lang.get_mensajes(&quot;EXIT_MESSAGE&quot;))</span>
+<span class="sd">    x = &#39;&#39;</span>
+<span class="sd">    while x == &#39;&#39;:</span>
+<span class="sd">        event = keyboard.read_event()</span>
+<span class="sd">        if event.event_type == keyboard.KEY_DOWN:</span>
+<span class="sd">            x = event.name</span>
+<span class="sd">            if x == &#39;x&#39;:</span>
+<span class="sd">                break</span>
+<span class="sd">    if x == &#39;x&#39;:</span>
+<span class="sd">        break</span>
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">DSL (Lenguaje de Dominio Específico) para configurar un servidor de forma segura</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Pruebas</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Álvaro G. Infante.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

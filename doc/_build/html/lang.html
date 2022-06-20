@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>lang module &#8212; DSL (Lenguaje de Dominio Específico) para configurar un servidor de forma segura  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="lexer module" href="lexer.html" />
+    <link rel="prev" title="json_manager module" href="json_manager.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-lang">
+<span id="lang-module"></span><h1>lang module<a class="headerlink" href="#module-lang" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="lang.check_linux_os">
+<span class="sig-prename descclassname"><span class="pre">lang.</span></span><span class="sig-name descname"><span class="pre">check_linux_os</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lang.html#check_linux_os"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lang.check_linux_os" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check which linux system is being run</p>
+<p>Parameters:
+none</p>
+<p>Returns:
+String:Return the linux distribution</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lang.check_os">
+<span class="sig-prename descclassname"><span class="pre">lang.</span></span><span class="sig-name descname"><span class="pre">check_os</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lang.html#check_os"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lang.check_os" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check which OS is being used by the system</p>
+<p>Parameters:
+none</p>
+<p>Returns:
+int: Returns 1 if it is windows or 0 if it is not</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lang.detect_language">
+<span class="sig-prename descclassname"><span class="pre">lang.</span></span><span class="sig-name descname"><span class="pre">detect_language</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lang.html#detect_language"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lang.detect_language" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to detect the language of the system</p>
+<p>Parameters:
+none</p>
+<p>Returns:
+String: Language of the system</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lang.get_mensajes">
+<span class="sig-prename descclassname"><span class="pre">lang.</span></span><span class="sig-name descname"><span class="pre">get_mensajes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lang.html#get_mensajes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lang.get_mensajes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the message in the correct language</p>
+<p>Parameters:
+term (String): Name of the term to be returned</p>
+<p>Returns:
+String: Message to be returned</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lang.set_language">
+<span class="sig-prename descclassname"><span class="pre">lang.</span></span><span class="sig-name descname"><span class="pre">set_language</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lang.html#set_language"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lang.set_language" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the language of the system</p>
+<p>Parameters:
+param (string): Language</p>
+<p>Returns:
+nothing</p>
+<p>&#64;author: Álvaro García Infante</p>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">DSL (Lenguaje de Dominio Específico) para configurar un servidor de forma segura</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Pruebas</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dsl.html">dsl module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interpreter.html">interpreter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json_manager.html">json_manager module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">lang module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lexer.html">lexer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">Pruebas</a><ul>
+      <li>Previous: <a href="json_manager.html" title="previous chapter">json_manager module</a></li>
+      <li>Next: <a href="lexer.html" title="next chapter">lexer module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Álvaro G. Infante.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/lang.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
