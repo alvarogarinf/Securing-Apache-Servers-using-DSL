@@ -63,7 +63,7 @@ Clone the repo
    ```
    
  Here we may distinct two different versions:
-  # Windows
+  #### Windows
   Double click on the main.exe application.
   
   # Linux
